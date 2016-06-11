@@ -7,7 +7,7 @@ class Heap():
 		self.heapify(l)
 		self.heap = l
 
-	def __root(self, node):
+	def __parent(self, node):
 		return (node - 1)//2
 
 	def __lchild(self, node):
@@ -16,50 +16,60 @@ class Heap():
 	def __rchild(self, node):
 		return 2 * node + 2
 
-	def heapify(self,A):
+	def heapify(self, a):
 		'''
-		Convert the list A into a valid heap, building from bottom up.
+		Convert list a into a valid heap.
 		'''
-		def sift_down(A, start, end):
-			'''
-			Move through the heap from the node indicated by 'start' and swap any nodes out of order. Assumes the heaps rooted at the children of of the start node are valid.
-			'''
-			# start root node
-			root = start
-			# while root has a child node
-			while self.__lchild(root) <= end:
-				# node w/ smallest value
-				swap   = root
-				lchild = self.__lchild(root)
-				rchild = lchild + 1
-				# left child smaller
-				if A[lchild] < A[swap]:
-					swap = lchild
-				# if there is right child & it is smaller
-				if rchild <= end and A[rchild] < A[swap]:
-					swap = rchild
-				# root is smallest
-				if swap == root:
-					# no changes needed
-					return
-				else:
-					# swap root with node w/ smallest val
-					A[root], A[swap] = A[swap], A[root]
-					# next root
-					root = swap
-		# last node & its parent
-		last_node = len(A) - 1
-		start = self.__root(last_node)
-		# for each parent node
-		while start >= 0:
-			# construct valid sub heap
-			sift_down(A, start, last_node)
-			# prev parent
-			start -= 1
+		# last node
+		last = len(a) - 1
+		# build heap from bottom up
+		for i in range(self.__parent(last), -1, -1):
+			self.to_big(a,i)
+
+	def to_small(self, a, i):
+		'''
+		Move up through heap & swap out of order elements.
+		'''
+		parent = self.__parent(i)
+		# if current node smaller than parent
+		if a[i] < a[parent]:
+			# swap
+			a[i], a[parent] = a[parent], a[i]
+			# move up a layer
+			self.to_small(a, parent)
+
+	def to_big(self, a, i):
+		'''
+		Move down through the heap & swap out of order elements.
+		'''
+		# last node
+		end = len(a) - 1
+		# children
+		lchild, rchild = self.__lchild(i), self.__rchild(i)
+		# if children
+		if lchild <= end:
+			# find smallest
+			swap = i
+			# left child smaller than parent
+			if a[swap] > a[lchild]:
+				swap = lchild
+			# if right child is smaller
+			elif rchild <= end and a[swap] > a[rchild]:
+				swap = rchild
+			else:
+				# parent is smallest
+				return
+
+			# swap
+			a[i], a[swap] = a[swap], a[i]
+			# move down a layer
+			self.to_big(a, swap)
+
 
 
 # TEST SUITE
 # --------------------------------------------
-l = [22,1,5,35,14,9,19,43,32]
+from random import randint
+l = [randint(0,100) for _ in range(10)]
 h = Heap(l)
 print(h.heap)

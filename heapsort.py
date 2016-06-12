@@ -1,7 +1,7 @@
 
 from math import floor
 
-class Heap():
+class Max_Heap():
 
 	def __init__(self, l = []):
 		self.heapify(l)
@@ -18,58 +18,75 @@ class Heap():
 
 	def heapify(self, a):
 		'''
-		Convert list a into a valid heap.
+		Convert list a into a heap.
 		'''
 		# last node
 		last = len(a) - 1
 		# build heap from bottom up
 		for i in range(self.__parent(last), -1, -1):
-			self.to_big(a,i)
+			# self.to_big(a,i, last)
+			self.sift_down(a, i, last)
 
-	def to_small(self, a, i):
+	def sift_up(self, a, i):
 		'''
 		Move up through heap & swap out of order elements.
 		'''
 		parent = self.__parent(i)
 		# if current node smaller than parent
-		if a[i] < a[parent]:
+		if a[i] > a[parent]:
 			# swap
 			a[i], a[parent] = a[parent], a[i]
 			# move up a layer
-			self.to_small(a, parent)
+			self.sift_up(a, parent)
 
-	def to_big(self, a, i):
+
+	def sift_down(self, a, start, end):
 		'''
-		Move down through the heap & swap out of order elements.
+		Repair the Heap from start index down to the leaves. Assumes the subtrees rooted at start are valid heaps.
 		'''
-		# last node
-		end = len(a) - 1
-		# children
-		lchild, rchild = self.__lchild(i), self.__rchild(i)
-		# if children
-		if lchild <= end:
-			# find smallest
-			swap = i
-			# left child smaller than parent
-			if a[swap] > a[lchild]:
-				swap = lchild
-			# if right child is smaller
-			elif rchild <= end and a[swap] > a[rchild]:
-				swap = rchild
+		def max_child(a, i):
+			'''
+			Return index of child with max value.
+			'''
+			lchild = self.__lchild(i)
+			rchild = lchild + 1
+			# if two children
+			if rchild <= end:
+				return lchild if a[lchild] > a[rchild] else rchild
+			elif lchild <= end:
+				return lchild
 			else:
-				# parent is smallest
-				return
+				return None
 
+		root = start
+		# child w/ max value
+		mchild = max_child(a, root)
+		# if child & > than root
+		if mchild and a[mchild] > a[root]:
 			# swap
-			a[i], a[swap] = a[swap], a[i]
-			# move down a layer
-			self.to_big(a, swap)
+			a[root], a[mchild] = a[mchild], a[root]
+			# mchild new root
+			self.sift_down(a, mchild, end)
 
+
+def heapsort(a, n):
+	# build heap
+	h = Max_Heap(a)
+	# last index
+	end = len(a) - 1
+	while end > 0:
+		# swap first & last elem
+		a[0], a[end] = a[end], a[0]
+		# decrement considered range
+		end -= 1
+		# repair heap
+		h.sift_down(a, 0, end)
 
 
 # TEST SUITE
 # --------------------------------------------
 from random import randint
 l = [randint(0,100) for _ in range(10)]
-h = Heap(l)
-print(h.heap)
+print("unsorted:\t", l)
+heapsort(l, len(l))
+print('sorted:\t\t', l)

@@ -27,7 +27,7 @@ class Max_Heap():
 			# self.to_big(a,i, last)
 			self.sift_down(a, i, last)
 
-	def sift_up(self, a, i):
+	def zuklein(self, a, i):
 		'''
 		Move up through heap & swap out of order elements.
 		'''
@@ -37,7 +37,7 @@ class Max_Heap():
 			# swap
 			a[i], a[parent] = a[parent], a[i]
 			# move up a layer
-			self.sift_up(a, parent)
+			self.zuklein(a, parent)
 
 
 	def sift_down(self, a, start, end):

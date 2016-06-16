@@ -2,7 +2,9 @@
 from math import floor
 
 class Max_Heap():
-
+	'''
+	This class represents a Max Heap, where the largest element is located at the root of the tree.
+	'''
 	def __init__(self, l = []):
 		self.heapify(l)
 		self.heap = l
@@ -18,21 +20,20 @@ class Max_Heap():
 
 	def heapify(self, a):
 		'''
-		Convert list a into a heap.
+		Convert list 'a' into a heap.
 		'''
 		# last node
 		last = len(a) - 1
 		# build heap from bottom up
 		for i in range(self.__parent(last), -1, -1):
-			# self.to_big(a,i, last)
-			self.sift_down(a, i, last)
+			self.zugross(a, i, last)
 
 	def zuklein(self, a, i):
 		'''
 		Move up through heap & swap out of order elements.
 		'''
 		parent = self.__parent(i)
-		# if current node smaller than parent
+		# if current node larger than its parent
 		if a[i] > a[parent]:
 			# swap
 			a[i], a[parent] = a[parent], a[i]
@@ -40,9 +41,9 @@ class Max_Heap():
 			self.zuklein(a, parent)
 
 
-	def sift_down(self, a, start, end):
+	def zugross(self, a, start, end):
 		'''
-		Repair the Heap from start index down to the leaves. Assumes the subtrees rooted at start are valid heaps.
+		Repair the Heap from start index down towards the leaves at the end index. This function assumes the subtrees rooted at start are valid heaps.
 		'''
 		def max_child(a, i):
 			'''
@@ -52,8 +53,10 @@ class Max_Heap():
 			rchild = lchild + 1
 			# if two children
 			if rchild <= end:
+				# return the larger
 				return lchild if a[lchild] > a[rchild] else rchild
 			elif lchild <= end:
+				# return the only child
 				return lchild
 			else:
 				return None
@@ -61,15 +64,18 @@ class Max_Heap():
 		root = start
 		# child w/ max value
 		mchild = max_child(a, root)
-		# if child & > than root
+		# if child & it is greater than root
 		if mchild and a[mchild] > a[root]:
 			# swap
 			a[root], a[mchild] = a[mchild], a[root]
-			# mchild new root
-			self.sift_down(a, mchild, end)
+			# down a layer with mchild new root
+			self.zugross(a, mchild, end)
 
 
 def heapsort(a, n):
+	'''
+	Sort the list a in ascencding order using the heapsort algorithm.
+	'''
 	# build heap
 	h = Max_Heap(a)
 	# last index
@@ -80,7 +86,7 @@ def heapsort(a, n):
 		# decrement considered range
 		end -= 1
 		# repair heap
-		h.sift_down(a, 0, end)
+		h.zugross(a, 0, end)
 
 
 # TEST SUITE
